@@ -2,12 +2,12 @@ Task tracker made wit Fast API
 
 This API can be used to create, update, retrieve and delete tasks
 The tasks model schema is:
-    ■ id (int): Primary key.
-    ■ title (string): Task title (required).
-    ■ description (string): Task description (optional).
-    ■ priority (int): Task priority (1 = High, 2 = Medium, 3 = Low).
-    ■ due_date (datetime): Due date for the task.
-    ■ completed (bool): Completion status (default: False).
+    - id (int): Primary key.
+    - title (string): Task title (required).
+    - description (string): Task description (optional).
+    - priority (int): Task priority (1 = High, 2 = Medium, 3 = Low).
+    - due_date (datetime): Due date for the task.
+    - completed (bool): Completion status (default: False).
 
 To run locally:
 create virtual environment -> python3 -m venv taskvenv
