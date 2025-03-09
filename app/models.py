@@ -5,8 +5,9 @@ import datetime
 from sqlalchemy.sql import func
 from typing import Optional
 from enum import Enum as PyEnum
+from app.database import Base
 
-Base = declarative_base()
+# Base = declarative_base()
 class Priority(PyEnum):
     HIGH = 1
     MED = 2
