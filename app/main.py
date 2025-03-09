@@ -9,13 +9,9 @@ app = FastAPI()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan context manager to handle startup and shutdown"""
-    # Startup
-    print("Starting up, creating database tables...")
     models.Base.metadata.create_all(bind=database.engine)
     yield
-    # Shutdown (optional, here just an example)
-    print("Shutting down, closing database connection.")
-    # Add any shutdown logic if needed, e.g. closing DB connection.
+
 app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
@@ -103,18 +99,17 @@ def get_task(task_id: int, db: Session = Depends(database.get_db)):
     return task
 
 
-@app.put("/tasks/{task_id}", response_model=models.TaskResponse)
-def update_task(task_id: int, task: models.TaskCreate, db: Session = Depends(database.get_db)):
+@app.put("/tasks/{task_id}", response_model=models.TaskUpdate)
+def update_task(task_id: int, task: models.TaskUpdate, db: Session = Depends(database.get_db)):
     """
     Update an existing task.
 
     **Path Parameters:**
     - `task_id`: The unique identifier of the task to be updated.
 
-    **Request Body:**
-    - `id`: Unique identifier of the task.
+    **Request Body (Optional Fields):**
     - `title`: The title of the task.
-    - `description` (Optional): A detailed description of the task.
+    - `description` A detailed description of the task.
     - `priority`: Priority level of the task (1 = High, 5 = Low).
     - `due_date`: The due date for task completion (ISO 8601 format).
     - `completed`: Boolean flag indicating if the task is completed.
@@ -127,17 +122,15 @@ def update_task(task_id: int, task: models.TaskCreate, db: Session = Depends(dat
     db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if db_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
-    db_task.title = task.title
-    db_task.description = task.description
-    db_task.priority = task.priority.value
-    db_task.due_date = task.due_date
-    db_task.completed = task.completed
+    update_data = task.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_task, key, value)
     db.commit()
     db.refresh(db_task)
     return db_task
 
 
-@app.delete("/tasks/{task_id}", response_model=models.TaskResponse)
+@app.delete("/tasks/{task_id}")
 def delete_task(task_id: int, db: Session = Depends(database.get_db)):
     """
     Delete a task by ID.
@@ -155,4 +148,7 @@ def delete_task(task_id: int, db: Session = Depends(database.get_db)):
         raise HTTPException(status_code=404, detail="Task not found")
     db.delete(db_task)
     db.commit()
-    return db_task
+    return {
+        "message": f"Task '{db_task.title}' with ID {db_task.id} deleted successfully."
+    }
+

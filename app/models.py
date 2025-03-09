@@ -36,3 +36,10 @@ class TaskCreate(BaseModel):
 # Pydantic model for response (Task with 'id')
 class TaskResponse(TaskCreate):
     id: int  # We include the 'id' field for response model
+
+class TaskUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    priority: Optional[int] = None
+    due_date: Optional[datetime.datetime] = None
+    completed: Optional[bool] = None

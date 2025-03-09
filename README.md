@@ -14,7 +14,7 @@ create virtual environment -> python3 -m venv taskvenv
 run app in Docker -> docker-compose up --build
 
 To run tests : 
-pytest
+command to run tests -> pytest
 
 
 Example API calls:
@@ -29,14 +29,9 @@ POST: curl -X POST "http://0.0.0.0:8010/tasks/" \
            "priority": 2,
            "due_date": "2025-03-08T10:00:00",
          }'
-PUT: curl -X PUT "http://0.0.0.0:8010/tasks/" \
+PUT: curl -X PUT "http://0.0.0.0:8010/tasks/{id}" \
      -H "Content-Type: application/json" \
      -d '{
-           "title": "My New Task",
-           "description": "This is a test task",
-           "priority": 2,
-           "due_date": "2025-03-08T10:00:00",
            "completed": true, #updated field
-           "id":1
          }'
 DELETE: curl -X DELETE http://0.0.0.0:8010/tasks/{id}
